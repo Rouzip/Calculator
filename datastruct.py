@@ -1,10 +1,19 @@
 from collections import deque
 import logging
+import re
+
 # 将中缀表达式改为后缀表达式
 
 # 操作数优先级
 operate = {
     '(': 7,
+    '*': 6,
+    '/': 6,
+    '+': 5,
+    '-': 5
+}
+
+suboperate = {
     '*': 6,
     '/': 6,
     '+': 5,
@@ -20,13 +29,14 @@ operate = {
 
 def checkInput(inputDeque)->bool:
     global operate
+    global suboperate
     # 左右两括号的数量
     left, right = 0, 0
     if not inputDeque:
         return False
     for pos, i in enumerate(inputDeque):
         if pos+1 < len(inputDeque) \
-                and (i in operate and inputDeque[pos+1] in operate):
+                and (i in suboperate and inputDeque[pos+1] in suboperate):
             return False
     # 对于括号的数目进行检测匹配
     for i in inputDeque:
@@ -44,17 +54,17 @@ def getPostfix(inputDeque: deque)->deque:
     # 使用stack来储存运算符号
     # num用来储存数字
     if not checkInput(inputDeque):
-        yield Exception
+        raise Exception
     stack = deque()
     result = deque()
-    temp = ''
+    temp = []
     try:
         for i in inputDeque:
             if '0' <= i <= '9':
-                temp = ''.join(i)
+                temp.append(i)
                 continue
-            result.append(temp)
-            temp = ''
+            result.append(''.join(temp))
+            temp.clear()
             if i == '(':
                 stack.append(i)
             elif i in operate:
@@ -72,11 +82,15 @@ def getPostfix(inputDeque: deque)->deque:
                     result.append(stack.pop())
                 stack.pop()
         else:
+            if temp:
+                result.append(''.join(temp))
             while stack:
                 result.append(stack.pop())
-        return result
     except Exception as e:
-        raise e
+        logging.exception(e)
+    finally:
+        print(type(result))
+        return result
 
 
 # 计算后缀表达式的值
@@ -84,8 +98,19 @@ def getPostfix(inputDeque: deque)->deque:
 def calculator(inputDeque: deque)->float:
     temp = deque()
     result = deque()
+    reWord = re.compile(r'[0-9]')
+    '''
+    编译错误？
+    类型错误，从上一个函数之中返回的是生成器
+    '''
     for i in inputDeque:
-        if '0' <= i <= '9':
+        num = re.search(reWord, i)
+        '''
+        现在这里没有什么好的方法将单位数字转化为多位数字
+        现在的想法是使用正则来匹配出数字，确定需要进栈的是什么
+        初步看了一下正则的原理，感觉很难？
+        '''
+        if num:
             result.append(i)
         else:
             try:
@@ -105,5 +130,5 @@ def calculator(inputDeque: deque)->float:
 
 if __name__ == '__main__':
     a = deque('1+2*3+(4*5+6)*7')
-    print(getPostfix(a))
-    print(calculator(getPostfix(a)))
+    b = getPostfix(a)
+    print(b)
