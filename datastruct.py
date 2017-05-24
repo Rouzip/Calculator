@@ -77,7 +77,7 @@ def getPostfix(inputDeque: deque)->deque:
                 stack.append(i)
             elif i == ')':
                 if not '(' in stack:
-                    yield print('您输入的括号无法匹配')
+                    raise print('您输入的括号无法匹配')
                 while stack[-1] != '(':
                     result.append(stack.pop())
                 stack.pop()
@@ -89,7 +89,6 @@ def getPostfix(inputDeque: deque)->deque:
     except Exception as e:
         logging.exception(e)
     finally:
-        print(type(result))
         return result
 
 
@@ -129,6 +128,6 @@ def calculator(inputDeque: deque)->float:
 
 
 if __name__ == '__main__':
-    a = deque('1+2*3+(4*5+6)*7')
-    b = getPostfix(a)
-    print(b)
+    a = deque('11+2*3+(4*5+6)*7')
+    print(getPostfix(a))
+    print(calculator(getPostfix(a)))
