@@ -3,7 +3,6 @@ import logging
 import re
 
 
-
 # 操作数优先级
 operate = {
     '(': 7,
@@ -28,6 +27,9 @@ suboperate = {
     '.': 0
 }
 
+# 可以连接的符号
+conoprtate = ['+', '-']
+
 '''
 进行初步的检测
 此函数用来检测输入是否合法，如果不合法返回False
@@ -42,10 +44,13 @@ def checkInput(inputDeque)->bool:
     left, right = 0, 0
     if not inputDeque:
         return False
+    # 看了别人的计算器，貌似相连的运算符可以进行处理
     # 检测是否有两个相连的算术运算符，如果有则说明输入有错误
     for pos, i in enumerate(inputDeque):
         if pos+1 < len(inputDeque) \
-                and (i in suboperate and inputDeque[pos+1] in suboperate):
+                and (i in suboperate and inputDeque[pos+1] in suboperate
+                     and i not in conoprtate and
+                     inputDeque[pos+1] not in conoprtate):
             return False
     # 对于括号的数目进行检测匹配
     for i in inputDeque:
@@ -72,6 +77,8 @@ def getPostfix(inputDeque: deque)->deque:
         for i in inputDeque:
             # 如果有数字，那么则进入缓存，在下一个运算符前压入结果栈(finally有对末尾的数字进行处理)
             if '0' <= i <= '9' or i == '.':
+                if i == '.' and not temp:
+                    raise print('违法输入.')
                 temp.append(i)
                 continue
             result.append(''.join(temp))
@@ -80,6 +87,9 @@ def getPostfix(inputDeque: deque)->deque:
             if i == '(':
                 stack.append(i)
             elif i in operate:
+                # 解决单目负号的问题，单目负号只能在开头或者(的后面才有意义
+                if i == '-' and (not inputDeque.index(i) or stack[-1] == '('):
+                    result.append('0')
                 # 如果运算符栈空或操作符优先级大于栈顶优先级入栈
                 if not stack or operate[i] > operate[stack[-1]]:
                     stack.append(i)
@@ -150,10 +160,9 @@ def calculator(inputDeque: deque):
 
 
 if __name__ == '__main__':
-    a = deque('(((6+6)*6+3)*2+6)*2')
+    a = deque('-7*4')
     try:
         print(getPostfix(a))
         print(calculator(getPostfix(a)))
     except Exception as e:
         logging.exception(e)
-    
