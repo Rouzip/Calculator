@@ -28,6 +28,7 @@ def cmpPri(a: str, b: str)->bool:
         '+': 11,
         '-': 11,
         '<': 5,
+        '>': 5,
         ',': 1,
         '0': 0
     }
@@ -220,10 +221,9 @@ def getPostfix(expr: str):
 
 # 测试代码
 if __name__ == '__main__':
-    a = deque('sin('+str(math.pi/2)+')')
+    a = deque('1>6')
 
     try:
-        print(type(getPostfix(a)))
+        print(getPostfix(a))
     except Exception as e:
         logging.exception(e)
-    print(123)
