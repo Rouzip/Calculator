@@ -55,6 +55,8 @@ def funToOp(ope: str)->str:
         return 'q'
     elif ope == 'log':
         return 'l'
+    elif ope == 'mod':
+        return '%'
     else:
         return ' '
 
