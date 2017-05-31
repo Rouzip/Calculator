@@ -31,7 +31,7 @@ def cmpPri(a: str, b: str)->bool:
         ',': 1,
         '0': 0
     }
-    
+
     if a == b and a == '^':
         return True
     if (operate[a] > operate[b]):
@@ -218,13 +218,10 @@ def getPostfix(expr: str):
         ops.pop()
     return result[0]
 
-
+# 测试代码
 if __name__ == '__main__':
-<<<<<<< HEAD
-    a = deque('5/1')
-=======
     a = deque('sin('+str(math.pi/2)+')')
->>>>>>> 08c531ecd8be196c90dc93469590267eab609919
+
     try:
         print(type(getPostfix(a)))
     except Exception as e:
