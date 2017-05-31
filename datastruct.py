@@ -55,8 +55,6 @@ def funToOp(ope: str)->str:
         return 'q'
     elif ope == 'log':
         return 'l'
-    elif ope == 'mod':
-        return '%'
     else:
         return ' '
 
@@ -133,6 +131,14 @@ def cal(ope: str, Expr: deque):
 
 
 def getPostfix(expr: str):
+    left, right = 0, 0
+    for i in expr:
+        if i == '(':
+            left += 1
+        elif i == ')':
+            right += 1
+    if left != right:
+        raise Exception
     # 记录转换后的表达式
     result = deque()
     # 记录符号
@@ -200,8 +206,9 @@ def getPostfix(expr: str):
     return result[0]
 
 if __name__ == '__main__':
-    a = deque('(1+2+3)^(1+2)')
+    a = deque('5/1')
     try:
-        print(getPostfix(a))
+        print(type(getPostfix(a)))
     except Exception as e:
         logging.exception(e)
+    print(123)
