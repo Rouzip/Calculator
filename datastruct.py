@@ -31,6 +31,7 @@ def cmpPri(a: str, b: str)->bool:
         ',': 1,
         '0': 0
     }
+    
     if a == b and a == '^':
         return True
     if (operate[a] > operate[b]):
@@ -82,6 +83,8 @@ def cal(ope: str, Expr: deque):
         Expr.append(a*b)
     elif ope == '/':
         b = int(Expr.pop())
+        if b == 0:
+            raise ZeroDivisionError
         a = Expr.pop()
         Expr.append(a/b)
     elif ope == '^':
@@ -90,10 +93,14 @@ def cal(ope: str, Expr: deque):
         Expr.append(math.pow(a, b))
     elif ope == '%':
         b = int(Expr.pop())
+        if b == 0:
+            raise ZeroDivisionError
         a = Expr.pop()
         Expr.append(a % b)
     elif ope == '!':
         a = Expr.pop()
+        if a <= 1:
+            raise Exception
         Expr.append(math.factorial(int(a)))
     elif ope == '<':
         b = Expr.pop()
@@ -108,12 +115,18 @@ def cal(ope: str, Expr: deque):
         Expr.append(math.sin(a))
     elif ope == 'c':
         a = Expr.pop()
+        if a % math.pi/2 == 0:
+            raise Exception
         Expr.append(math.cos(a))
     elif ope == 't':
         a = Expr.pop()
+        if a % math.pi/2 == 0:
+            raise Exception
         Expr.append(math.tan(a))
     elif ope == 'q':
         a = Expr.pop()
+        if a < 0:
+            raise Exception
         Expr.append(math.sqrt(a))
     elif ope == 'l':
         a = Expr.pop()
@@ -205,8 +218,13 @@ def getPostfix(expr: str):
         ops.pop()
     return result[0]
 
+
 if __name__ == '__main__':
+<<<<<<< HEAD
     a = deque('5/1')
+=======
+    a = deque('sin('+str(math.pi/2)+')')
+>>>>>>> 08c531ecd8be196c90dc93469590267eab609919
     try:
         print(type(getPostfix(a)))
     except Exception as e:
